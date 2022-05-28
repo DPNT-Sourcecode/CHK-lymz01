@@ -14,4 +14,3 @@ def compute(x, y):
         raise ValueError("Input integers should lie between 0 and 100")
 
     return(x + y)
-
