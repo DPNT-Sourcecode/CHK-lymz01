@@ -5,6 +5,10 @@ def checkout(skus):
     """
     skus = A string containing the SKUs of all the products in the basket
     """
+    # Type checks
+    if type(skus) != str:
+        raise TypeError("Skus should be a string.")
+
     # Turn the string into uppercase letters:
     skus = skus.upper()
 
@@ -21,7 +25,10 @@ def checkout(skus):
 
     # Iterate through the items
     for item in skus:
-        if item == "A":
+        # Type check:
+        if item not in ["A", "B", "C", "D"]:
+            raise ValueEror("Only items A, B, C, and D are allowed.")
+        elif item == "A":
             a_s += 1
         elif item == "B":
             b_s += 1
@@ -37,5 +44,6 @@ def checkout(skus):
     price_counter = price_counter - a_s_discount - b_s_discount
 
     return(price_counter)
+
 
 
