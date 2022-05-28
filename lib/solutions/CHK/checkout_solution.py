@@ -54,4 +54,3 @@ def checkout(skus):
     price_counter = price_counter - (a_s_discount + e_s_discount_to_b + b_s_discount)
 
     return(price_counter)
-
