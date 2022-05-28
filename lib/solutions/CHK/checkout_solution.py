@@ -9,9 +9,6 @@ def checkout(skus):
     if type(skus) != str:
         return -1
 
-    # Turn the string into uppercase letters:
-    skus = skus.upper()
-
     # Create counters of A's and B's, after summing all variables we reduce
     # using special offers
     a_s = 0
@@ -44,7 +41,3 @@ def checkout(skus):
     price_counter = price_counter - a_s_discount - b_s_discount
 
     return(price_counter)
-
-
-
-
