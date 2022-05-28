@@ -1,6 +1,40 @@
 def checkout(skus):
     """
     skus = A string containing the SKUs of all the products in the basket
+
+    Applies the following prices and special offers and returns the total price
+    at checkout:
+
+    +------+-------+---------------------------------+
+    | Item | Price | Special offers                  |
+    +------+-------+---------------------------------+
+    | A    | 50    | 3A for 130, 5A for 200          |
+    | B    | 30    | 2B for 45                       |
+    | C    | 20    |                                 |
+    | D    | 15    |                                 |
+    | E    | 40    | 2E get one B free               |
+    | F    | 10    | 2F get one F free               |
+    | G    | 20    |                                 |
+    | H    | 10    | 5H for 45, 10H for 80           |
+    | I    | 35    |                                 |
+    | J    | 60    |                                 |
+    | K    | 70    | 2K for 120                      |
+    | L    | 90    |                                 |
+    | M    | 15    |                                 |
+    | N    | 40    | 3N get one M free               |
+    | O    | 10    |                                 |
+    | P    | 50    | 5P for 200                      |
+    | Q    | 30    | 3Q for 80                       |
+    | R    | 50    | 3R get one Q free               |
+    | S    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
+    | T    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
+    | U    | 40    | 3U get one U free               |
+    | V    | 50    | 2V for 90, 3V for 130           |
+    | W    | 20    |                                 |
+    | X    | 17    | buy any 3 of (S,T,X,Y,Z) for 45 |
+    | Y    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
+    | Z    | 21    | buy any 3 of (S,T,X,Y,Z) for 45 |
+    +------+-------+---------------------------------+
     """
     # Type checks
     if type(skus) != str:
@@ -8,25 +42,26 @@ def checkout(skus):
 
     # Create counters dictionary of special items. After summing all prices we reduce
     # the checkout using special offers
-    special_counts = {"A": 0, "B": 0, "E": 0, "F": 0, "H": 0, "K": 0,
-                      "N": 0, "M":0, "P": 0, "Q": 0, "R": 0, "U": 0, "V": 0}
+
+    special_counts = {"A": 0, "B": 0, "E": 0, "F": 0, "H": 0, "K": 0, "M": 0,
+                      "N": 0, "P": 0, "Q": 0, "R": 0, "S": 0, "T": 0, "U": 0,
+                      "V": 0, "X": 0, "Y": 0, "Z": 0}
 
     special_discounts = {k: v for k, v in special_counts.items()}
 
 
     # Create a dictionary of prices
-    prices_dict =  {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40, "F": 10, "G" : 20,
-                   "H" : 10, "I" : 35, "J" : 60, "K" : 80, "L" : 90, "M" : 15,
-                   "N" : 40, "O" : 10, "P" : 50, "Q" : 30, "R" : 50, "S" : 30,
-                   "T" : 20, "U" : 40, "V" : 50, "W" : 20,
-                   "X" : 90, "Y" : 10, "Z" : 50}
+    prices_dict =  {"A": 50, "B": 30, "C": 20, "D": 15, "E": 40, "F": 10, "G": 20,
+                    "H": 10, "I": 35, "J": 60, "K": 70, "L": 90, "M": 15, "N": 40,
+                    "O": 10, "P": 50, "Q": 30, "R": 50, "S": 20, "T": 20, "U": 40,
+                    "V": 50, "W": 20, "X": 17, "Y": 20, "Z": 21}
 
 
 
     # Create a total price object:
     price_counter = 0
 
-    # Iterate through the items
+    # Iterate through the items adding the individual prices
     for item in skus:
         # For non-implemented itemsType check:
         if item not in prices_dict.keys():
@@ -35,6 +70,8 @@ def checkout(skus):
             special_counts[item] += 1
 
         price_counter += prices_dict[item]
+
+    # --- INDIVIDUAL DISCOUNTS BEGINNING
 
     # Create A discount:
     a_discount_by_5 = (special_counts["A"] // 5) * (prices_dict["A"] * 5 - 200)
@@ -66,14 +103,11 @@ def checkout(skus):
     special_discounts["H"] = h_discount_by_10 + h_discount_by_5
 
     # Create K discount:
-    special_discounts["K"] = (special_counts["K"] // 2) * (prices_dict["K"] * 2 - 150)
+    special_discounts["K"] = (special_counts["K"] // 2) * (prices_dict["K"] * 2 - 120)
 
-    # Create N discount:
+    # Create N discount for M:
     m_free = special_counts["N"] // 3
     special_discounts["M"] = min(special_counts["M"], m_free) * prices_dict["M"]
-
-    # --- No need to substract because M does not have special offers
-    #special_counts[""]
 
     # Create P discount:
     special_discounts["P"] = (special_counts["P"] // 5) * (prices_dict["P"] * 5 - 200)
@@ -98,8 +132,51 @@ def checkout(skus):
     v_discount_by_2 = (remainder_after_3 // 2) * (prices_dict["V"] * 2 - 90)
     special_discounts["V"] = v_discount_by_2 + v_discount_by_3
 
-    discounts = sum(special_discounts.values())
+    # --- GROUP DISCOUNTS BEGINNING:
 
-    price_counter = price_counter - discounts
+    # Use the labels to get their prices and counts
+    # Items with higher prices will be discounted first
+    # Group counts will be eliminated in the discount loop
+    group_labels = ["S", "T", "X", "Y", "Z"]
+    group_prices = {label: price for label, price in prices_dict.items()
+                    if label in group_labels}
+    group_counts = {label: count for label, count in special_counts.items()
+                    if label in group_labels}
+
+    sort_prices = sorted(group_prices.items(), key = lambda item: item[1], reverse = True)
+
+    # Total discounts (used later) and number of items with discount (as a counter
+    # for a while loop)
+    n_group_discounts = sum(group_counts.values()) // 3
+    n_items_with_discount = n_group_discounts * 3
+
+    #print("group discounts", n_group_discounts)
+
+    while n_items_with_discount > 0:
+        # From the most expensive items to the cheapest ones, take their prices out of
+        # the price counter
+        for item in sort_prices:
+            # If an item discount has not been applied to all of its units, take one of its units
+            # substract its price from the total price counter, and take one item out of
+            # the total number of items with discount. Then break the loop to check
+            # that we have not reached the maximum number of items with discount
+
+            if group_counts[item[0]] > 0:
+                group_counts[item[0]] -= 1 # - 1 item of this certain label
+                price_counter -= item[1]   # Take price out
+                n_items_with_discount -= 1 # -1 item with discount
+                break
+
+            # If the item is depleted, go to the next one
+            else:
+                continue
+
+    # --- GROUP DISCOUNTS ENDING
+
+    individual_discounts = sum(special_discounts.values())
+
+    # Add the price of total group discounts
+    price_counter = price_counter + n_group_discounts * 45 - individual_discounts
 
     return(price_counter)
+
