@@ -34,4 +34,3 @@ def checkout(skus):
     price_counter = price_counter - as_discount - bs_discount
 
     return(price_counter)
-

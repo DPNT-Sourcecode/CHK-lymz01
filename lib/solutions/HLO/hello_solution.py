@@ -12,7 +12,3 @@ def hello(friend_name):
         raise TypeEror("friend_name should be a string")
 
     return("Hello, " + friend_name + "!")
-
-
-
-
