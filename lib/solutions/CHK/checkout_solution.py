@@ -7,7 +7,7 @@ def checkout(skus):
     """
     # Type checks
     if type(skus) != str:
-        raise TypeError("Skus should be a string.")
+        return -1
 
     # Turn the string into uppercase letters:
     skus = skus.upper()
@@ -25,9 +25,9 @@ def checkout(skus):
 
     # Iterate through the items
     for item in skus:
-        # Type check:
+        # For non-implemented itemsType check:
         if item not in ["A", "B", "C", "D"]:
-            raise ValueEror("Only items A, B, C, and D are allowed.")
+            return -1
         elif item == "A":
             a_s += 1
         elif item == "B":
@@ -44,6 +44,7 @@ def checkout(skus):
     price_counter = price_counter - a_s_discount - b_s_discount
 
     return(price_counter)
+
 
 
 
