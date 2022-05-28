@@ -5,6 +5,9 @@ def checkout(skus):
     """
     skus = A string containing the SKUs of all the products in the basket
     """
+    # Turn the string into uppercase letters:
+    skus = skus.upper()
+
     # Create counters of A's and B's, after summing all variables we reduce
     # using special offers
     a_s = 0
@@ -34,4 +37,5 @@ def checkout(skus):
     price_counter = price_counter - a_s_discount - b_s_discount
 
     return(price_counter)
+
 
