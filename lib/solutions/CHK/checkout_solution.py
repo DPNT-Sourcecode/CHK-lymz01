@@ -179,4 +179,3 @@ def checkout(skus):
     price_counter = price_counter + n_group_discounts * 45 - individual_discounts
 
     return(price_counter)
-
