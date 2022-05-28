@@ -65,4 +65,3 @@ def checkout(skus):
                                      f_s_discount)
 
     return(price_counter)
-
